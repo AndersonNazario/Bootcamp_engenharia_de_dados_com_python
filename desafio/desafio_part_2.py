@@ -1,4 +1,6 @@
-menu = '''
+import textwrap
+
+menu = '''\n
         ================ MENU ================
         |  [1]\tDepositar                    |
         |  [2]\tSacar                        |
@@ -9,6 +11,7 @@ menu = '''
         |  [7]\tSair                         |
         ================ MENU ================
     =>'''
+
 
 def depositar(saldo, valor, extrato, /):
     if valor > 0:
@@ -51,7 +54,43 @@ def mostrar_extrato(saldo,/,*,extrato):
     print(f"\nSaldo:\t\tR$ {saldo:.2f}")
     print("==========================================")   
 
+def criar_novo_usuario(usuarios):
+    cpf = input("Informe o CPF do cliente (SOMENTE NUMEROS): ")     
+    usuario = filtrar_usuario(cpf, usuarios)
 
+    if usuario:
+        print("\nERRO: CPF ja existe em nosso banco de dados.")
+        return
+    nome = input("Nome completo: ")
+    endereco = input("Informe seu indereço: ")
+    data_de_nascimento = input("Informe a data de nascimento dd-mm-aaaa: ")
+
+    usuarios.append({"nome": nome, "data_de_nascimento": data_de_nascimento, "cpf": cpf, "endereco": endereco})
+
+    print("Sucesso: Usuario criado!")
+
+def filtrar_usuario(cpf, usuarios):
+    usuarios_filtrados = [usuario for usuario in usuarios if usuario["cpf"] == cpf]
+    return usuarios_filtrados[0] if usuarios_filtrados else None
+
+def criar_conta(agencia, numero_conta, usuarios):
+    cpf = input("Informe o CPF do cliente: ")
+    usuario = filtrar_usuario(cpf, usuarios)
+
+    if usuario:
+        print("\nSucesso: Conta criada com sucesso!!")
+        return {"agencia": agencia, "numero_conta": numero_conta, "usuario": usuario}
+    print("\nERRO: Usuario não encontrado!!!")
+
+def listar_contas(contas):
+    for conta in contas:
+        linha = f"""
+            Agencia:\t{conta['agencia']}
+            C/C:\t\t{conta['numero_conta']}
+            Titular:\t{conta['usuario']['nome']}
+        """
+        print("=" * 100)
+        print(textwrap.dedent(linha))
 
 
 def main():
@@ -102,7 +141,7 @@ def main():
                 contas.append(conta)
 
         elif opcao == "6":
-            listar_contas(contas)
+           listar_contas(contas)
 
         elif opcao == "7":
             break
